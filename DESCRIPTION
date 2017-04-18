@@ -1,0 +1,12 @@
+Package: iFORM
+Type: Package
+Title: Forward Selection Under Marginality Principle
+Version: 1.0
+Date: 2017-02-03
+Author: Kirk Gosik
+Maintainer: Kirk Gosik <kgosik@hmc.psu.edu>
+Description: Extended variable selection approaches to jointly model main and
+    interaction effects from high-dimensional data.
+License: GPL-3
+LazyData: TRUE
+RoxygenNote: 5.0.1
