@@ -26,8 +26,8 @@ iForm <- function(formula,
 
   dat <- model.frame(formula, data)
 
-  y <- dat[ , 1]
-  x <- dat[ , -1]
+  y <- dat[, 1]
+  x <- dat[, -1]
   p <- ncol(x)
   n <- nrow(x)
   C <- names(x)
@@ -114,23 +114,21 @@ iformselect <- function( x, y, p, n, C, S, bic, heredity, higher_order ) {
 
 #' Finding minimum RSS
 #'
-#' Extended variable selection approaches to jointly model main and interaction effects from high-dimensional data orignally proposed by Hao and Zhang (2014) and extended by Gosik and Wu (2016).
-#' Based on a greedy forward approach, their model can identify all possible interaction effects through two algorithms, iFORT and iFORM, which have been proved to possess sure screening property in an ultrahigh-dimensional setting.
+#' Helper function to take in the candidate set and solution set along with the observations
+#' and previous data to calculate the residual sum of sqaures for each of the candidate
+#' predictors given what has already been selected.
 #'
-#' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under ‘Details’.
+#' @param C vector of candidate predictors to consider in this step of the procedure
+#' @param S vector of solution predictor selected from previous steps of the procedure
+#' @param y  vector of observed responses
 #' @param data data.frame of your data with the response and all p predictors
-#' @param heredity  a string specifying the heredity to be considered. NULL, weak, strong
-#' @param higher_order  logical TRUE indicating to include order-3 interactions in the search (default FALSE)
-#' @return a summary of the linear model returned after the selection procedure
+#' @return A vector of the RSS values for each candidate predictor
 #' @author Kirk Gosik
 #' @details
-#' Runs the iFORM selection procedure on the dataset and returns a linear model
-#' of the final selected model.  The model is of an R object of class "lm"
-#' @seealso \code{lm}
-#' @seealso \code{model.frame}
+#' Mapping function to calculcate the residual sum of squares for each of the candidate predictors
+#' @seealso \code{model.matrix}
 #' @export
-#' @importFrom stats lm
-#' @importFrom stats model.frame
+#' @importFrom stats model.matrix
 
 
 rss_map_func <- function( C, S, y, data ) {
@@ -152,6 +150,22 @@ rss_map_func <- function( C, S, y, data ) {
 
 ## Heredity Selection
 
+
+#' Creating interactions based off of strong heredity principle
+#'
+#' Helper function to give all possible order-2 interactions following the strong
+#' heredity principle.
+#'
+#' @param S vector of solution predictor selected from previous steps of the procedure
+#' @param data data.frame of your data with the response and all p predictors
+#' @return A vector of the RSS values for each candidate predictor
+#' @author Kirk Gosik
+#' @details
+#' Finds all p choose 2 combinations of predicotrs in the solution set
+#' @seealso \code{model.matrix}
+#' @export
+#' @importFrom stats model.matrix
+
 # strong order 2
 strong_order2 <- function(S, data) {
 
@@ -165,7 +179,26 @@ strong_order2 <- function(S, data) {
 }
 
 
-# weak order 2
+
+#' Creating interactions based off of weak heredity principle
+#'
+#' Helper function to give all possible order-2 interactions following the weak
+#' heredity principle.
+#'
+#' @param C vector of candidate predictors to consider in this step of the procedure
+#' @param S vector of solution predictor selected from previous steps of the procedure
+#' @param data data.frame of your data with the response and all p predictors
+#' @return A vector of the RSS values for each candidate predictor
+#' @author Kirk Gosik
+#' @details
+#' Finds all p choose 3 combinations between the predicotrs in the solution set and the
+#' predictors in the candidate set.
+#' @seealso \code{model.matrix}
+#' @export
+#' @importFrom stats model.matrix
+
+
+  # weak order 2
 weak_order2 <- function( S, C, data ) {
 
   tryCatch({
@@ -177,6 +210,21 @@ weak_order2 <- function( S, C, data ) {
 
 }
 
+
+#' Creating interactions based off of strong heredity principle
+#'
+#' Helper function to give all possible order-3 interactions following the strong
+#' heredity principle.
+#'
+#' @param S vector of solution predictor selected from previous steps of the procedure
+#' @param data data.frame of your data with the response and all p predictors
+#' @return A vector of the RSS values for each candidate predictor
+#' @author Kirk Gosik
+#' @details
+#' Finds all p choose 3 combinations between the predicotrs in the solution set.
+#' @seealso \code{model.matrix}
+#' @export
+#' @importFrom stats model.matrix
 
 # strong order 3
 strong_order3 <- function( S, data ) {
@@ -190,6 +238,25 @@ strong_order3 <- function( S, data ) {
 
 }
 
+
+
+
+#' Creating interactions based off of weak heredity principle
+#'
+#' Helper function to give all possible order-3 interactions following the strong
+#' heredity principle.
+#'
+#' @param C vector of candidate predictors to consider in this step of the procedure
+#' @param S vector of solution predictor selected from previous steps of the procedure
+#' @param data data.frame of your data with the response and all p predictors
+#' @return A vector of the RSS values for each candidate predictor
+#' @author Kirk Gosik
+#' @details
+#' Finds all p choose 3 combinations between the predicotrs in the solution set and the
+#' predictors in the candidate set.
+#' @seealso \code{model.matrix}
+#' @export
+#' @importFrom stats model.matrix
 
 # weak order 3
 weak_order3 <- function( S, C, data ) {
