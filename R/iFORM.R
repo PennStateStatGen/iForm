@@ -126,7 +126,6 @@ iformselect <- function( x, y, p, n, C, S, bic, heredity, higher_order ) {
 #' @author Kirk Gosik
 #' @details
 #' Mapping function to calculcate the residual sum of squares for each of the candidate predictors
-#' @seealso \code{model.matrix}
 #' @export
 #' @importFrom stats model.matrix
 
@@ -164,7 +163,7 @@ rss_map_func <- function( C, S, y, data ) {
 #' Finds all p choose 2 combinations of predicotrs in the solution set
 #' @seealso \code{model.matrix}
 #' @export
-#' @importFrom stats model.matrix
+#' @importFrom utils combn
 
 # strong order 2
 strong_order2 <- function(S, data) {
@@ -193,7 +192,6 @@ strong_order2 <- function(S, data) {
 #' @details
 #' Finds all p choose 3 combinations between the predicotrs in the solution set and the
 #' predictors in the candidate set.
-#' @seealso \code{model.matrix}
 #' @export
 #' @importFrom stats model.matrix
 
@@ -204,7 +202,7 @@ weak_order2 <- function( S, C, data ) {
   tryCatch({
 
     main_effects <- sort(S[S %in% names(data)])
-    as.vector(outer(main_effects, C, paste, sep = ":"))
+    as.vector(outer(main_effects, C[C %in% names(data)], paste, sep = ":"))
 
   }, error = function(e) NULL)
 
@@ -222,9 +220,8 @@ weak_order2 <- function( S, C, data ) {
 #' @author Kirk Gosik
 #' @details
 #' Finds all p choose 3 combinations between the predicotrs in the solution set.
-#' @seealso \code{model.matrix}
 #' @export
-#' @importFrom stats model.matrix
+#' @importFrom utils combn
 
 # strong order 3
 strong_order3 <- function( S, data ) {
@@ -254,9 +251,8 @@ strong_order3 <- function( S, data ) {
 #' @details
 #' Finds all p choose 3 combinations between the predicotrs in the solution set and the
 #' predictors in the candidate set.
-#' @seealso \code{model.matrix}
 #' @export
-#' @importFrom stats model.matrix
+
 
 # weak order 3
 weak_order3 <- function( S, C, data ) {
@@ -270,7 +266,7 @@ weak_order3 <- function( S, C, data ) {
     )
 
     weak_three <- as.vector(
-      outer(interaction_effects, C, paste, sep = ":")
+      outer(interaction_effects, C[C %in% names(data)], paste, sep = ":")
     )
 
     as.vector(
